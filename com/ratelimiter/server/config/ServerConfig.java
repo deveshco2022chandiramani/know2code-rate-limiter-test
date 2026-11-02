@@ -31,12 +31,12 @@ public final class ServerConfig {
         private int backlogSize = 50;
         private long serverRunDurationMs = 60_000;
 
-        public Builder port(int v)                 { this.port = v; return this; }
+        public Builder port(int v)                { this.port = v; return this; }
         public Builder socketTimeoutMs(int v)      { this.socketTimeoutMs = v; return this; }
         public Builder maxRequestsPerWindow(int v) { this.maxRequestsPerWindow = v; return this; }
         public Builder windowMs(long v)            { this.windowMs = v; return this; }
         public Builder backlogSize(int v)          { this.backlogSize = v; return this; }
-        public Builder serverRunDurationMs(long v)  { this.serverRunDurationMs = v; return this; }
+        public Builder serverRunDurationMs(long v) { this.serverRunDurationMs = v; return this; }
 
         public ServerConfig build() {
             ConfigGuard.require(port >= 1 && port <= 65535, "port must be 1-65535, got: " + port);
