@@ -1,6 +1,8 @@
 package com.ratelimiter.server.networking;
 
 import com.ratelimiter.server.config.ServerConfig;
+import com.ratelimiter.server.pipeline.RequestProcessor;
+import com.ratelimiter.shared.model.Response;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -13,20 +15,22 @@ import java.util.concurrent.atomic.AtomicLong;
 public final class Server implements AutoCloseable {
 
     private final ServerConfig config;
+    private final RequestProcessor handler;
     private final ServerSocket serverSocket;
 
     private final AtomicBoolean running = new AtomicBoolean(false);
     private final AtomicInteger activeConnections = new AtomicInteger(0);
     private final AtomicLong totalConnectionCount = new AtomicLong(0);
 
-    private Server(ServerConfig config) throws IOException {
+    private Server(ServerConfig config, RequestProcessor handler) throws IOException {
         this.config = config;
+        this.handler = handler;
         this.serverSocket = new ServerSocket(config.port, config.backlogSize);
         this.serverSocket.setSoTimeout(1_000);
     }
 
     public static Server create(ServerConfig config) throws IOException {
-        return new Server(config);
+        return new Server(config, req -> Response.ok(req.requestId(), "<stub for " + req.requestType() + ">"));
     }
 
     public void start() {
@@ -59,7 +63,7 @@ public final class Server implements AutoCloseable {
             if (socket != null) {
                 long id = totalConnectionCount.incrementAndGet();
                 activeConnections.incrementAndGet();
-                ClientHandler ch = new ClientHandler(socket, config.socketTimeoutMs);
+                ClientHandler ch = new ClientHandler(socket, config.socketTimeoutMs, handler);
                 Thread.ofVirtual().name("client-" + id).start(() -> {
                     try { ch.run(); }
                     finally { activeConnections.decrementAndGet(); }

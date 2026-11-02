@@ -40,12 +40,11 @@ public final class ServerConfig {
 
         public ServerConfig build() {
             ConfigGuard.require(port >= 1 && port <= 65535, "port must be 1-65535, got: " + port);
-            ConfigGuard.require(socketTimeoutMs > 0, "socketTimeoutMs must be > 0, got: " + socketTimeoutMs);
-            ConfigGuard.require(maxRequestsPerWindow > 0, "maxRequestsPerWindow must be > 0, got: " + maxRequestsPerWindow);
-            ConfigGuard.require(windowMs > 0, "windowMs must be > 0, got: " + windowMs);
-            ConfigGuard.require(backlogSize > 0, "backlogSize must be > 0, got: " + backlogSize);
-            ConfigGuard.require(serverRunDurationMs == -1 || (serverRunDurationMs >= 1 && serverRunDurationMs <= 60_000),
-                "serverRunDurationMs must be -1 (infinite) or 1-60000, got: " + serverRunDurationMs);
+            ConfigGuard.require(socketTimeoutMs > 0, "socketTimeoutMs must be > 0");
+            ConfigGuard.require(maxRequestsPerWindow > 0, "maxRequestsPerWindow must be > 0");
+            ConfigGuard.require(windowMs > 0, "windowMs must be > 0");
+            ConfigGuard.require(backlogSize > 0, "backlogSize must be > 0");
+            ConfigGuard.require(serverRunDurationMs == -1 || (serverRunDurationMs >= 1 && serverRunDurationMs <= 60_000), "serverRunDurationMs must be -1 (infinite) or 1-60000, got: " + serverRunDurationMs);
             return new ServerConfig(this);
         }
     }
